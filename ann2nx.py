@@ -2,7 +2,7 @@
 # coding: utf-8
 
 # # Ann2nx
-# 
+#
 # Convertit les fichiers "ann" du corpus annoté de Stab & Gurevych en un fichier networkx
 
 # In[10]:
@@ -44,41 +44,6 @@ def get_whole_sentence(txt, start, end):
     return pre + txt[start:end] + post
 
 
-# In[26]:
-
-def indicators(ann, txt, start, end):
-    sent = get_whole_sentence(txt, start, end)
-    
-    markers = []
-    na = 0
-    ns = 0
-    
-    # Markers of support
-    for i in "because therefore after for since when assuming so accordingly thus hence then consequently".split():
-        if i in sent.lower():
-            markers += [i]
-            ns += 1
-    
-    #Markers of attack
-    for i in "however but though except not never no whereas nonetheless yet despite".split():
-        if i in sent.lower():
-            markers += [i]
-            na +=1
-    
-    if ns-na == 0:
-        polarity = "none" if len(markers) == 0 else "neutral"
-    elif ns > na:
-        polarity = "support"
-    elif na > ns:
-        polarity = "against"
-    
-    return {"indicators": " ".join(markers), 
-            "sentence": sent,
-            "num_support": ns,
-            "num_against": na,
-            "polarity": polarity}
-
-
 # In[94]:
 
 def addnodes(ann, txt, num):
@@ -89,8 +54,7 @@ def addnodes(ann, txt, num):
         node_type = s[1]
         start, end = map(int, s[2:4])
         text = " ".join(s[4:])
-        extra_attrs = indicators(ann, txt, start, end)
-        
+
         G.add_node("Arg%02d_%s" % (num, name),
                    type = node_type,
                    text = text,
@@ -137,4 +101,3 @@ for ann, txt in rawdata:
 # In[106]:
 
 networkx.write_gpickle(G,"corpus.gpickle")
-
